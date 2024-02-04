@@ -1,0 +1,84 @@
+def ipv6_expand(adress):
+
+    ipv6=""
+    A=adress.split(":")
+    total=""    
+    for item in A:
+        if (len(item)<4) and (item != ''):
+            item=item.zfill(4)
+        if item=='':
+            item=4*(9-len(A))*"0"
+        total += item
+    for j in range (0,32,4):
+            ipv6 += total[j:j+4]+":"
+    expanded=ipv6.rstrip(":")
+    return expanded
+
+# Returns True if the given ipv6 is in the subnet
+def is_in_ipv6_subnet(ip,subnet):
+
+    ip_values=[]
+    ipv6=""
+    mask=subnet.split("/")[1]
+    subnet_mask_str=(int(mask)*"1")+(128-int(mask))*"0"
+    subnet_mask= int(subnet_mask_str, 2)
+    ip_adress_str=subnet.split("/")[0]
+    A=ip_adress_str.split(":")
+    total=""
+    grand_total_str=""
+    for item in A:
+        if (len(item)<4) and (item != ''):
+            item=item.zfill(4)
+        if item=='':
+            item=4*(9-len(A))*"0"
+        total += item
+    for item in total:
+        grand_total_str += format(int(item,16), '04b')
+    grand_total=int(grand_total_str,2)
+    result=(grand_total & subnet_mask)
+    A=ip.split(":")
+    total=""
+    grand_total_str=""
+    for item in A:
+        if (len(item)<4) and (item != ''):
+            item=item.zfill(4)
+        if item=='':
+            item=4*(9-len(A))*"0"
+        total += item
+    for item in total:
+        grand_total_str += format(int(item,16), '04b')
+    grand_total=int(grand_total_str,2)
+    i=int(result)
+    t=128-int(mask)
+    j=i+(2**t-1)
+    if (grand_total >= i) and (grand_total <= j):
+        return True
+    else:
+        return False
+    
+# Returns True if the given ipv4 is in the subnet
+
+def is_in_ipv4_subnet(queried_ip,adress):
+
+    mask=adress.split("/")[1]
+    subnet_mask_str=(int(mask)*"1")+(32-int(mask))*"0"
+    subnet_mask= int(subnet_mask_str, 2)
+    ip_adress_str=""
+    ip=adress.split("/")[0]
+    ips=ip.split(".")
+    for item in ips:
+        ip_adress_str += bin(int(item))[2:].zfill(8)
+    ip_adress=int(ip_adress_str,2)
+    result=(ip_adress & subnet_mask )
+    ips=queried_ip.split(".")
+    ip_adress_str=""
+    for item in ips:
+        ip_adress_str += bin(int(item))[2:].zfill(8)
+    ip_adress=int(ip_adress_str,2)
+    i=int(result)
+    t=32-int(mask)
+    j=i+(2**t-1)
+    if (ip_adress >= i) and (ip_adress <= j):
+        return True
+    else:
+        return False
