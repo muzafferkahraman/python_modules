@@ -1,22 +1,14 @@
 class Subnet_query:
 
-  def ipv6_expand(self,ipv6_address):
-    ipv6=""
-    A=ipv6_address.split(":")
-    total=""
-    for item in A:
-        if (len(item)<4) and (item != ''):
-            item=item.zfill(4)
-        if item=='':
-            item=4*(9-len(A))*"0"
-        total += item
-    for j in range (0,32,4):
-            ipv6 += total[j:j+4]+":"
-    expanded=ipv6.rstrip(":")
-    return expanded
+  def __init__(self,check_ip,in_subnet):
+
+        self.ipa=check_ip
+        self.subnet=in_subnet
+
 
   # Returns True if the given ipv6 is in the subnet
-  def is_in_ipv6_subnet(self,ipv6,subnet):
+  def is_in_ipv6_subnet(self,ipa,subnet):
+
     ip_values=[]
     mask=subnet.split("/")[1]
     subnet_mask_str=(int(mask)*"1")+(128-int(mask))*"0"
@@ -35,7 +27,7 @@ class Subnet_query:
         grand_total_str += format(int(item,16), '04b')
     grand_total=int(grand_total_str,2)
     result=(grand_total & subnet_mask)
-    A=ipv6.split(":")
+    A=ipa.split(":")
     total=""
     grand_total_str=""
     for item in A:
@@ -57,7 +49,9 @@ class Subnet_query:
 
 
   # Returns True if the given ipv4 is in the subnet
-  def is_in_ipv4_subnet(self,ipv4,subnet):
+  def is_in_ipv4_subnet(self,ipa,subnet):
+
+
     mask=subnet.split("/")[1]
     subnet_mask_str=(int(mask)*"1")+(32-int(mask))*"0"
     subnet_mask= int(subnet_mask_str, 2)
@@ -68,7 +62,7 @@ class Subnet_query:
         ip_adress_str += bin(int(item))[2:].zfill(8)
     ip_adress=int(ip_adress_str,2)
     result=(ip_adress & subnet_mask )
-    ips=ipv4.split(".")
+    ips=ipa.split(".")
     ip_adress_str=""
     for item in ips:
         ip_adress_str += bin(int(item))[2:].zfill(8)
@@ -80,3 +74,4 @@ class Subnet_query:
         return True
     else:
         return False
+
